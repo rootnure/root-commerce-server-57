@@ -51,6 +51,20 @@ async function run() {
             res.send(result);
         });
 
+        app.patch('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            // const options = {upsert: true};
+            const product = req.body;
+            const updateProduct = {
+                $set: {
+                    ...product
+                }
+            }
+            const result = await productsCollection.updateOne(filter, updateProduct);
+            res.send(result);
+        })
+
 
 
 
