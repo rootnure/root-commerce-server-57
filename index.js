@@ -27,8 +27,11 @@ async function run() {
         await client.connect();
 
         const productsCollection = client.db('root').collection('products');
+        const productDetailsCollection = client.db('root').collection('productDetails');
         const cartCollection = client.db('root').collection('cart');
 
+
+        // product api's
         app.post('/product', async (req, res) => {
             const product = req.body;
             const result = await productsCollection.insertOne(product);
@@ -41,7 +44,6 @@ async function run() {
             const cursor = productsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
-            // res.send(cursor);
         });
 
         app.get('/product/:id', async (req, res) => {
@@ -67,7 +69,28 @@ async function run() {
         });
 
 
-        // cart based on user
+        // product details api's
+        app.post('/details/:id', async (req, res) => {
+            const id = req.params.id;
+            const details = req.body;
+            const productDetails = { productId: id, ...details };
+            const result = await productDetailsCollection.insertOne(productDetails);
+            res.send(result);
+        });
+
+        app.get('/details/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { productId: id };
+            const options = {
+                projection: { _id: 0, productId: 0 }
+            }
+            const cursor = productDetailsCollection.find(query, options);
+            const result = await cursor.toArray();
+            res.send(result[0]);
+        })
+
+
+        // cart api's
         app.put('/cart/:email', async (req, res) => {
             const email = req.params.email;
             const filter = { email };
