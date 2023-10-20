@@ -29,6 +29,8 @@ async function run() {
         const productsCollection = client.db('root').collection('products');
         const productDetailsCollection = client.db('root').collection('productDetails');
         const cartCollection = client.db('root').collection('cart');
+        const brandsCollection = client.db('root').collection('brands');
+        const productTypeCollection = client.db('root').collection('type');
 
 
         // product api's
@@ -51,7 +53,7 @@ async function run() {
             const query = { _id: new ObjectId(id) };
             const cursor = productsCollection.find(query);
             const result = await cursor.toArray();
-            res.send(result);
+            res.send(result[0]);
         });
 
         app.patch('/product/:id', async (req, res) => {
@@ -81,12 +83,9 @@ async function run() {
         app.get('/details/:id', async (req, res) => {
             const id = req.params.id;
             const query = { productId: id };
-            const options = {
-                projection: { _id: 0, productId: 0 }
-            }
-            const cursor = productDetailsCollection.find(query, options);
+            const cursor = productDetailsCollection.find(query);
             const result = await cursor.toArray();
-            res.send(result[0]);
+            res.send(result[0]?.details || []);
         })
 
 
@@ -112,6 +111,22 @@ async function run() {
             const cursor = cartCollection.find(filter);
             const result = await cursor.toArray();
             res.send(result[0].cart);
+        });
+
+        // brands
+        app.get('/brands', async (req, res) => {
+            const cursor = brandsCollection.find();
+            const result = await cursor.toArray();
+            const types = result.map(brand => brand.brand);
+            res.send(types);
+        });
+
+        // product type
+        app.get('/types', async (req, res) => {
+            const cursor = productTypeCollection.find();
+            const result = await cursor.toArray();
+            const types = result.map(type => type.type);
+            res.send(types);
         });
 
 
