@@ -27,6 +27,7 @@ async function run() {
         await client.connect();
 
         const productsCollection = client.db('root').collection('products');
+        const cartCollection = client.db('root').collection('cart');
 
         app.post('/product', async (req, res) => {
             const product = req.body;
@@ -63,7 +64,26 @@ async function run() {
             }
             const result = await productsCollection.updateOne(filter, updateProduct);
             res.send(result);
-        })
+        });
+
+
+        // add or update cart based on user
+        app.put('/cart/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email };
+            const options = { upsert: true };
+            const cart = req.body;
+            const updatedCart = {
+                $set: {
+                    email,
+                    cart
+                }
+            }
+            const result = await cartCollection.updateOne(filter, updatedCart, options);
+            res.send(result);
+        });
+
+
 
 
 
