@@ -67,7 +67,7 @@ async function run() {
         });
 
 
-        // add or update cart based on user
+        // cart based on user
         app.put('/cart/:email', async (req, res) => {
             const email = req.params.email;
             const filter = { email };
@@ -81,6 +81,14 @@ async function run() {
             }
             const result = await cartCollection.updateOne(filter, updatedCart, options);
             res.send(result);
+        });
+
+        app.get('/cart/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email };
+            const cursor = cartCollection.find(filter);
+            const result = await cursor.toArray();
+            res.send(result[0].cart);
         });
 
 
