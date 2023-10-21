@@ -111,7 +111,7 @@ async function run() {
             const filter = { email };
             const cursor = cartCollection.find(filter);
             const result = await cursor.toArray();
-            res.send(result[0].cart);
+            res.send(result[0]?.cart || {});
         });
 
         // brands
