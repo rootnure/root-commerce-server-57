@@ -31,6 +31,7 @@ async function run() {
         const cartCollection = client.db('root').collection('cart');
         const brandsCollection = client.db('root').collection('brands');
         const productTypeCollection = client.db('root').collection('type');
+        const faqCollection = client.db('root').collection('faq');
 
 
         // product api's
@@ -117,8 +118,7 @@ async function run() {
         app.get('/brands', async (req, res) => {
             const cursor = brandsCollection.find();
             const result = await cursor.toArray();
-            const types = result.map(brand => brand.brand);
-            res.send(types);
+            res.send(result);
         });
 
         // product type
@@ -128,6 +128,13 @@ async function run() {
             const types = result.map(type => type.type);
             res.send(types);
         });
+
+        // faq
+        app.get('/faq', async (req, res) => {
+            const cursor = faqCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
 
 
