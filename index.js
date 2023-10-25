@@ -32,6 +32,7 @@ async function run() {
         const brandsCollection = client.db('root').collection('brands');
         const productTypeCollection = client.db('root').collection('type');
         const faqCollection = client.db('root').collection('faq');
+        const brandInfoCollection = client.db('root').collection('brandInfo');
 
 
         // product api's
@@ -134,6 +135,16 @@ async function run() {
             const cursor = faqCollection.find();
             const result = await cursor.toArray();
             res.send(result);
+        })
+
+        // brandInfo
+        app.get('/brandInfo/:brand', async (req, res) => {
+            const brandName = req.params.brand;
+            const filter = { brandName };
+            const cursor = brandInfoCollection.find(filter);
+            const result = await cursor.toArray();
+            const data = result[0].sliderImages;
+            res.send(data);
         })
 
 
